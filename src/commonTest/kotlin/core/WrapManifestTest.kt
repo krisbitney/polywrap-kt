@@ -1,7 +1,7 @@
 package core
 
 import encodedTestManifest
-import io.polywrap.core.wrap.WrapManifest
+import io.github.krisbitney.core.wrap.WrapManifest
 import readTestResource
 import testManifest
 import kotlin.test.*

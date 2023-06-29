@@ -1,11 +1,11 @@
 package client
 
-import io.polywrap.client.PolywrapClient
-import io.polywrap.configBuilder.ClientConfigBuilder
-import io.polywrap.core.resolution.Uri
-import io.polywrap.core.resolution.UriPackageOrWrapper
-import io.polywrap.core.types.InvokeOptions
-import io.polywrap.msgpack.msgPackEncode
+import io.github.krisbitney.client.PolywrapClient
+import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.core.resolution.UriPackageOrWrapper
+import io.github.krisbitney.core.types.InvokeOptions
+import io.github.krisbitney.core.msgpack.msgPackEncode
 import kotlinx.serialization.Serializable
 import kotlin.test.Test
 import kotlin.test.assertNull

@@ -1,6 +1,6 @@
 package util
 
-import io.polywrap.util.indexOfSubList
+import io.github.krisbitney.core.util.indexOfSubList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

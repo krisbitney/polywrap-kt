@@ -1,13 +1,13 @@
 package configBuilder
 
-import io.polywrap.configBuilder.BuilderConfig
-import io.polywrap.configBuilder.ClientConfigBuilder
-import io.polywrap.configBuilder.DefaultBundle
-import io.polywrap.core.resolution.Uri
-import io.polywrap.core.resolution.UriPackageOrWrapper
-import io.polywrap.core.resolution.UriResolutionContext
-import io.polywrap.core.resolution.UriResolver
-import io.polywrap.core.types.*
+import io.github.krisbitney.configBuilder.BuilderConfig
+import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.DefaultBundle
+import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.core.resolution.UriPackageOrWrapper
+import io.github.krisbitney.core.resolution.UriResolutionContext
+import io.github.krisbitney.core.resolution.UriResolver
+import io.github.krisbitney.core.types.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -42,12 +42,12 @@ class ClientConfigBuilderTest {
         }
     }
 
-    private val testEnv1: Pair<String, WrapperEnv> = Pair(
+    private val testEnv1: Pair<String, WrapEnv> = Pair(
         "wrap://ens/test.plugin.one",
         mapOf("test" to "value")
     )
 
-    private val testEnv2: Pair<String, WrapperEnv> = Pair(
+    private val testEnv2: Pair<String, WrapEnv> = Pair(
         "wrap://ens/test.plugin.two",
         mapOf("test" to "value")
     )

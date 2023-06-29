@@ -1,7 +1,7 @@
 package wasm
 
-import io.polywrap.core.types.FileReader
-import io.polywrap.wasm.FileReaderFactory
+import io.github.krisbitney.core.types.FileReader
+import io.github.krisbitney.wasm.FileReaderFactory
 import readTestResource
 import kotlin.test.*
 

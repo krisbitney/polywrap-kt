@@ -1,10 +1,10 @@
 package client
 
-import io.polywrap.client.PolywrapClient
-import io.polywrap.configBuilder.ClientConfigBuilder
-import io.polywrap.core.resolution.Uri
-import io.polywrap.core.resolution.UriPackageOrWrapper
-import io.polywrap.core.wrap.WrapManifest
+import io.github.krisbitney.client.PolywrapClient
+import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.core.resolution.UriPackageOrWrapper
+import io.github.krisbitney.core.wrap.WrapManifest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

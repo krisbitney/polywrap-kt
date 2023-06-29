@@ -1,8 +1,8 @@
 package plugins
 
 import emptyMockInvoker
-import io.polywrap.plugins.filesystem.FileSystemPlugin
-import io.polywrap.plugins.filesystem.wrapHardCoded.*
+import io.github.krisbitney.plugins.filesystem.FileSystemPlugin
+import io.github.krisbitney.plugins.filesystem.wrap.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest

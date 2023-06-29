@@ -1,13 +1,13 @@
 package plugins
 
-import io.polywrap.client.PolywrapClient
-import io.polywrap.configBuilder.ClientConfigBuilder
-import io.polywrap.configBuilder.DefaultBundle
-import io.polywrap.msgpack.MsgPackMap
-import io.polywrap.msgpack.msgPackDecode
-import io.polywrap.msgpack.msgPackEncode
-import io.polywrap.msgpack.toMsgPackMap
-import io.polywrap.plugins.http.wrapHardCoded.*
+import io.github.krisbitney.client.PolywrapClient
+import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.DefaultBundle
+import io.github.krisbitney.core.msgpack.MsgPackMap
+import io.github.krisbitney.core.msgpack.msgPackDecode
+import io.github.krisbitney.core.msgpack.msgPackEncode
+import io.github.krisbitney.core.msgpack.toMsgPackMap
+import io.github.krisbitney.plugins.http.wrap.*
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -17,13 +17,13 @@ class HttpPluginIntegrationTest {
     fun shouldEncodeAndDecodeHttpRequestObject() {
         val httpRequest = ArgsGet(
             url="https://ipfs.wrappers.io/api/v0/cat",
-            request=HttpRequest(
+            request=Request(
                 headers = null,
                 urlParams = mapOf("arg" to "QmThRxFfr7Hj9Mq6WmcGXjkRrgqMG3oD93SLX27tinQWy5/wrap.info").toMsgPackMap(),
-                responseType = HttpResponseType.BINARY,
+                responseType = ResponseType.BINARY,
                 body = null,
                 formData = null,
-                timeout = 5000
+                timeout = 5000u
             )
         )
 
@@ -37,7 +37,7 @@ class HttpPluginIntegrationTest {
 
     @Test
     fun shouldEncodeAndDecodeHttpResponseObject() {
-        val httpResponse = HttpResponse(
+        val httpResponse = Response(
             status=200,
             statusText="OK",
             headers= MsgPackMap(
@@ -66,7 +66,7 @@ class HttpPluginIntegrationTest {
         )
 
         val encoded = msgPackEncode(httpResponse)
-        val decoded = msgPackDecode<HttpResponse?>(encoded).getOrThrow()
+        val decoded = msgPackDecode<Response?>(encoded).getOrThrow()
         assertEquals(httpResponse, decoded)
     }
 
@@ -74,7 +74,7 @@ class HttpPluginIntegrationTest {
     fun invokeByClient() {
         val config = ClientConfigBuilder().addDefaults().build()
         val client = PolywrapClient(config)
-        val result = client.invoke<HttpResponse?>(
+        val result = client.invoke<Response?>(
             uri = DefaultBundle.plugins["http"]!!.uri,
             method = "get",
             args = mapOf("url" to "https://httpbin.org/get")

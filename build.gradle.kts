@@ -3,9 +3,11 @@ plugins {
     kotlin("plugin.serialization") version "1.8.20"
     id("com.goncalossilva.resources") version "0.2.5"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
+    id("org.jetbrains.dokka") version "1.8.20"
+    id("convention.publication")
 }
 
-group = "io.polywrap"
+group = "io.github.krisbitney"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -21,11 +23,7 @@ kotlin {
             useJUnitPlatform()
         }
     }
-//    js(IR) {
-//        nodejs {
-//            binaries.executable()
-//        }
-//    }
+
     val hostOs = System.getProperty("os.name")
     val arch = System.getProperty("os.arch")
     val isMingwX64 = hostOs.startsWith("Windows")
@@ -50,30 +48,23 @@ kotlin {
             }
         }
         val commonTest by getting {
+            resources.srcDirs("src/commonMain/resources")
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-                implementation("com.goncalossilva:resources:0.3.1") // access resources in tests
-                implementation("io.ktor:ktor-client-mock:2.3.0") // http plugin test
+                implementation("com.goncalossilva:resources:0.3.2") // access resources in tests
+                implementation("io.ktor:ktor-client-mock:2.3.1") // http plugin test
                 implementation("com.ionspin.kotlin:bignum:0.3.8") // client test
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0") // client test
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1") // client test
             }
         }
         val jvmMain by getting {
             dependencies {
                 implementation("io.github.kawamuray.wasmtime:wasmtime-java:0.14.0")
                 implementation("io.ktor:ktor-client-android:2.3.0") // http plugin
+                implementation("org.slf4j:slf4j-nop:1.7.36") // suppress SLF4J logger warnings
             }
         }
-        val jvmTest by getting
-//        val jsMain by getting {
-//            dependencies {
-//                implementation(npm("@polywrap/asyncify-js", "~0.10.0-pre"))
-//                implementation("io.ktor:ktor-client-js:2.3.0") // http plugin
-//                implementation("com.squareup.okio:okio-nodefilesystem:3.3.0") // fs plugin
-//            }
-//        }
-//        val jsTest by getting
         val nativeMain by getting {
             dependencies {
                 implementation("io.github.krisbitney:wasmtime-kt:1.0.0")
@@ -84,8 +75,27 @@ kotlin {
                 }
             }
         }
-        val nativeTest by getting
     }
+}
+
+// javadoc generation for Maven repository publication
+tasks.register<Jar>("dokkaJavadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
+}
+
+// generate dokka html site and copy it to docs folder
+tasks.register<Copy>("copyDokkaHtml") {
+    dependsOn(tasks.dokkaHtml)
+    val docsDir = "$projectDir/docs"
+    doFirst { delete(docsDir) }
+    from("$buildDir/dokka/html")
+    into(docsDir)
+}
+// automatically generate docs site when publishing
+if (!version.toString().endsWith("-SNAPSHOT")) {
+    tasks.publish { dependsOn("copyDokkaHtml") }
 }
 
 // print stdout during tests
@@ -106,5 +116,23 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         exclude("**/nativeTest/**")
         exclude("**/wrap/**")
         exclude("**/wrapHardCoded/**")
+    }
+}
+
+// ktlint has a bug where 'exclude' does not work, so this is a workaround
+tasks {
+    listOf(
+        runKtlintCheckOverCommonMainSourceSet,
+        runKtlintCheckOverCommonTestSourceSet
+    ).forEach {
+        it {
+            setSource(
+                project.sourceSets.map { sourceSet ->
+                    sourceSet.allSource.filter { file ->
+                        !file.path.contains("/generated/") && !file.path.contains("build.gradle.kts")
+                    }
+                }
+            )
+        }
     }
 }

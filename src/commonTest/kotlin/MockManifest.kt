@@ -1,12 +1,12 @@
-import io.polywrap.core.wrap.WrapManifest
-import io.polywrap.core.wrap.formats.wrap01.WrapManifest01
-import io.polywrap.core.wrap.formats.wrap01.abi.Abi01
-import io.polywrap.core.wrap.formats.wrap01.abi.GenericDefinition
-import io.polywrap.core.wrap.formats.wrap01.abi.MethodDefinition
-import io.polywrap.core.wrap.formats.wrap01.abi.ModuleDefinition
-import io.polywrap.core.wrap.formats.wrap01.abi.ObjectDefinition
-import io.polywrap.core.wrap.formats.wrap01.abi.PropertyDefinition
-import io.polywrap.core.wrap.formats.wrap01.abi.ScalarDefinition
+import io.github.krisbitney.core.wrap.WrapManifest
+import io.github.krisbitney.core.wrap.formats.wrap01.WrapManifest01
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.Abi01
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.GenericDefinition
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.MethodDefinition
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.ModuleDefinition
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.ObjectDefinition
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.PropertyDefinition
+import io.github.krisbitney.core.wrap.formats.wrap01.abi.ScalarDefinition
 
 val mockManifest = WrapManifest(
     abi = Abi01(),

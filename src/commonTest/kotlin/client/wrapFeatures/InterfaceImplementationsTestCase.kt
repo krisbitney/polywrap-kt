@@ -1,12 +1,12 @@
 package client.wrapFeatures
 
-import io.polywrap.client.PolywrapClient
-import io.polywrap.configBuilder.ClientConfigBuilder
-import io.polywrap.core.resolution.Uri
-import io.polywrap.uriResolvers.SequentialResolver
-import io.polywrap.uriResolvers.embedded.PackageRedirectResolver
-import io.polywrap.uriResolvers.embedded.UriRedirectResolver
-import io.polywrap.uriResolvers.extendable.ExtendableUriResolver
+import io.github.krisbitney.client.PolywrapClient
+import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.uriResolvers.SequentialResolver
+import io.github.krisbitney.uriResolvers.embedded.PackageRedirectResolver
+import io.github.krisbitney.uriResolvers.embedded.UriRedirectResolver
+import io.github.krisbitney.uriResolvers.extendable.ExtendableUriResolver
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import mockPlugin

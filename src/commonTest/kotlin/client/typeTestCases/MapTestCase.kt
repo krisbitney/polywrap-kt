@@ -1,10 +1,10 @@
 package client.typeTestCases
 
-import io.polywrap.client.PolywrapClient
-import io.polywrap.configBuilder.ClientConfigBuilder
-import io.polywrap.core.resolution.Uri
-import io.polywrap.msgpack.MsgPackMap
-import io.polywrap.msgpack.toMsgPackMap
+import io.github.krisbitney.client.PolywrapClient
+import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.core.msgpack.MsgPackMap
+import io.github.krisbitney.core.msgpack.toMsgPackMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlin.test.Test
 import kotlin.test.assertEquals

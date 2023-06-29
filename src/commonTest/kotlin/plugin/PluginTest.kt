@@ -1,10 +1,10 @@
 package plugin
 
 import emptyMockInvoker
-import io.polywrap.core.resolution.Uri
-import io.polywrap.core.types.InvokeOptions
-import io.polywrap.msgpack.msgPackDecode
-import io.polywrap.msgpack.msgPackEncode
+import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.core.types.InvokeOptions
+import io.github.krisbitney.core.msgpack.msgPackDecode
+import io.github.krisbitney.core.msgpack.msgPackEncode
 import mockPlugin
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,8 +1,8 @@
 package core
 
-import io.polywrap.core.resolution.*
-import io.polywrap.core.resolution.algorithms.getImplementations
-import io.polywrap.uriResolvers.embedded.UriRedirect
+import io.github.krisbitney.core.resolution.*
+import io.github.krisbitney.core.resolution.algorithms.getImplementations
+import io.github.krisbitney.uriResolvers.embedded.UriRedirect
 import kotlin.test.*
 
 class GetImplementationsTest {
