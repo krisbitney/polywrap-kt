@@ -10,7 +10,7 @@ import io.github.krisbitney.core.types.WrapEnv
  */
 /**
  * Represents in intermediary representation of the Polywrap Client configuration,
- * used to facilitate config composition in the [ClientConfigBuilder].
+ * used to facilitate config composition in the [ConfigBuilder].
  *
  * @property envs A [MutableMap] mapping environment URIs to their respective [WrapEnv].
  * @property interfaces A [MutableMap] mapping interface URIs to their respective [MutableSet] of implementation URIs.

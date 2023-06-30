@@ -1,7 +1,7 @@
 package client.wrapFeatures
 
 import io.github.krisbitney.client.PolywrapClient
-import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.ConfigBuilder
 import io.github.krisbitney.core.resolution.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -30,7 +30,7 @@ class EnvTestCase {
         )
     )
 
-    private val config = ClientConfigBuilder()
+    private val config = ConfigBuilder()
         .addDefaults()
         .addEnvs(envs)
         .addRedirect("ens/external-env.polywrap.eth" to externalWrapperUri.uri)

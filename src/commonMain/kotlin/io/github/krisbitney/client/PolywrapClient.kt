@@ -6,7 +6,6 @@ import io.github.krisbitney.core.types.*
 import io.github.krisbitney.core.util.getEnvFromUriHistory
 import io.github.krisbitney.core.wrap.WrapManifest
 import io.github.krisbitney.core.msgpack.EnvSerializer
-import io.github.krisbitney.core.msgpack.MapArgsSerializer
 import io.github.krisbitney.core.msgpack.NullableKVSerializer
 import io.github.krisbitney.core.msgpack.msgPackDecode
 import io.github.krisbitney.core.msgpack.msgPackEncode
@@ -159,12 +158,9 @@ class PolywrapClient(val config: ClientConfig) : Client {
      */
     override fun invoke(options: InvokeOptions): Result<ByteArray> {
         val resolutionContext = options.resolutionContext ?: BasicUriResolutionContext()
-        val loadWrapperResult = loadWrapper(options.uri, resolutionContext)
-
-        if (loadWrapperResult.isFailure) {
-            return Result.failure(loadWrapperResult.exceptionOrNull()!!)
+        val wrapper = loadWrapper(options.uri, resolutionContext).getOrElse {
+            return@invoke Result.failure(it)
         }
-        val wrapper = loadWrapperResult.getOrThrow()
 
         val resolutionPath = resolutionContext.getResolutionPath()
 
@@ -193,27 +189,23 @@ class PolywrapClient(val config: ClientConfig) : Client {
         uri: Uri,
         method: String,
         args: Map<String, Any?>? = null,
-        env: Map<String, Any>? = null,
+        env: WrapEnv? = null,
         resolutionContext: UriResolutionContext? = null
     ): InvokeResult<R> {
         val options = InvokeOptions(
             uri = uri,
             method = method,
-            args = args?.let { msgPackEncode(MapArgsSerializer, it) },
+            args = args?.let { msgPackEncode(NullableKVSerializer, it) },
             env = env?.let { msgPackEncode(EnvSerializer, it) },
             resolutionContext = resolutionContext
         )
-        val result = invoke(options)
-        if (result.isFailure) {
-            return Result.failure(result.exceptionOrNull()!!)
+        return invoke(options).mapCatching {
+            if (R::class == Map::class) {
+                msgPackDecode(NullableKVSerializer, it).getOrThrow() as R
+            } else {
+                msgPackDecode(serializer<R>(), it).getOrThrow()
+            }
         }
-        // The only valid Map return type is Map<String, Any> and its nullable versions
-        if (R::class == Map::class) {
-            val decoded = msgPackDecode(NullableKVSerializer, result.getOrThrow())
-            return if (decoded.isFailure) Result.failure(decoded.exceptionOrNull()!!)
-            else Result.success(decoded.getOrThrow() as R)
-        }
-        return msgPackDecode(serializer<R>(), result.getOrThrow())
     }
 
     /**
@@ -230,7 +222,7 @@ class PolywrapClient(val config: ClientConfig) : Client {
         uri: Uri,
         method: String,
         args: T? = null,
-        env: Map<String, Any>? = null,
+        env: WrapEnv? = null,
         resolutionContext: UriResolutionContext? = null
     ): InvokeResult<R> {
         val options = InvokeOptions(
@@ -240,17 +232,13 @@ class PolywrapClient(val config: ClientConfig) : Client {
             env = env?.let { msgPackEncode(EnvSerializer, it) },
             resolutionContext = resolutionContext
         )
-        val result = invoke(options)
-        if (result.isFailure) {
-            return Result.failure(result.exceptionOrNull()!!)
+        return invoke(options).mapCatching {
+            if (R::class == Map::class) {
+                msgPackDecode(NullableKVSerializer, it).getOrThrow() as R
+            } else {
+                msgPackDecode(serializer<R>(), it).getOrThrow()
+            }
         }
-        // The only valid Map return type is Map<String, Any> and its nullable versions
-        if (R::class == Map::class) {
-            val decoded = msgPackDecode(NullableKVSerializer, result.getOrThrow())
-            return if (decoded.isFailure) Result.failure(decoded.exceptionOrNull()!!)
-            else Result.success(decoded.getOrThrow() as R)
-        }
-        return msgPackDecode(serializer<R>(), result.getOrThrow())
     }
 
     /**
@@ -258,17 +246,15 @@ class PolywrapClient(val config: ClientConfig) : Client {
      *
      * @param uri The URI to be resolved.
      * @param resolutionContext The [UriResolutionContext] to be used during URI resolution, or null for a default context.
-     * @param resolveToPackage If true, the client will attempt to resolve the URI to a package rather than a wrapper.
      * @return A [Result] containing the resolved [UriPackageOrWrapper], or an error if the resolution fails.
      */
     override fun tryResolveUri(
         uri: Uri,
-        resolutionContext: UriResolutionContext?,
-        resolveToPackage: Boolean
+        resolutionContext: UriResolutionContext?
     ): Result<UriPackageOrWrapper> {
         val uriResolver = getResolver()
         val context = resolutionContext ?: BasicUriResolutionContext()
-        return uriResolver.tryResolveUri(uri, this, context, resolveToPackage)
+        return uriResolver.tryResolveUri(uri, this, context)
     }
 
     /**
@@ -293,7 +279,7 @@ class PolywrapClient(val config: ClientConfig) : Client {
     ): Result<Wrapper> {
         val context = resolutionContext ?: BasicUriResolutionContext()
 
-        val result = tryResolveUri(uri, context, false)
+        val result = tryResolveUri(uri, context)
 
         if (result.isFailure) {
             val history = buildCleanUriHistory(context.getHistory())
@@ -345,7 +331,7 @@ class PolywrapClient(val config: ClientConfig) : Client {
     ): Result<WrapPackage> {
         val context = resolutionContext ?: BasicUriResolutionContext()
 
-        val result = tryResolveUri(uri, context, true)
+        val result = tryResolveUri(uri, context)
 
         if (result.isFailure) {
             val history = buildCleanUriHistory(context.getHistory())
@@ -362,7 +348,7 @@ class PolywrapClient(val config: ClientConfig) : Client {
         return when (val uriPackageOrWrapper = result.getOrThrow()) {
             is UriPackageOrWrapper.PackageValue -> Result.success(uriPackageOrWrapper.pkg)
             else -> {
-                val message = "Unable to find URI ${uriPackageOrWrapper.uri.uri}."
+                val message = "Unable to load package at URI ${uriPackageOrWrapper.uri.uri}."
                 val history = buildCleanUriHistory(context.getHistory())
                 val error = WrapError(
                     reason = message,

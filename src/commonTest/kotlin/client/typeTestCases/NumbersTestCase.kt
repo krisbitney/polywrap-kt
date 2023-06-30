@@ -1,7 +1,7 @@
 package client.typeTestCases
 
 import io.github.krisbitney.client.PolywrapClient
-import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.ConfigBuilder
 import io.github.krisbitney.core.resolution.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 class NumbersTestCase {
 
     private val uri = Uri("fs/$pathToTestWrappers/numbers-type/implementations/rs")
-    private val config = ClientConfigBuilder().addDefaults().build()
+    private val config = ConfigBuilder().addDefaults().build()
     private val client = PolywrapClient(config)
 
     @Test

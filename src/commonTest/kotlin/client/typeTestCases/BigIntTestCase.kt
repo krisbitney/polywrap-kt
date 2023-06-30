@@ -2,7 +2,7 @@ package client.typeTestCases
 
 import com.ionspin.kotlin.bignum.integer.toBigInteger
 import io.github.krisbitney.client.PolywrapClient
-import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.ConfigBuilder
 import io.github.krisbitney.core.resolution.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 class BigIntTestCase {
 
     private val uri = Uri("fs/$pathToTestWrappers/bigint-type/implementations/rs")
-    private val config = ClientConfigBuilder().addDefaults().build()
+    private val config = ConfigBuilder().addDefaults().build()
     private val client = PolywrapClient(config)
 
     @Test

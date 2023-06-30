@@ -8,7 +8,7 @@ import kotlin.test.*
 class GetImplementationsTest {
     private fun getUriResolutionHandler(redirects: List<UriRedirect>): UriResolutionHandler {
         return object : UriResolutionHandler {
-            override fun tryResolveUri(uri: Uri, resolutionContext: UriResolutionContext?, resolveToPackage: Boolean): Result<UriPackageOrWrapper> {
+            override fun tryResolveUri(uri: Uri, resolutionContext: UriResolutionContext?): Result<UriPackageOrWrapper> {
                 var currentUri = uri
                 val result: UriPackageOrWrapper
                 while (true) {

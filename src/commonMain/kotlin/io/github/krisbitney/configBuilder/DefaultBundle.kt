@@ -77,7 +77,7 @@ class DefaultBundle {
          * Get the default Client configuration bundle
          */
         fun getConfig(): BuilderConfig {
-            val builder = ClientConfigBuilder()
+            val builder = ConfigBuilder()
 
             // Add all embedded packages
             for (embed in embeds.values) {

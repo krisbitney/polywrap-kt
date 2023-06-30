@@ -1,7 +1,7 @@
 package client.typeTestCases
 
 import io.github.krisbitney.client.PolywrapClient
-import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.ConfigBuilder
 import io.github.krisbitney.core.resolution.Uri
 import io.github.krisbitney.core.msgpack.MsgPackMap
 import io.github.krisbitney.core.msgpack.toMsgPackMap
@@ -16,7 +16,7 @@ import pathToTestWrappers
 class MapTestCase {
 
     private val uri = Uri("fs/$pathToTestWrappers/map-type/implementations/rs")
-    private val config = ClientConfigBuilder().addDefaults().build()
+    private val config = ConfigBuilder().addDefaults().build()
     private val client = PolywrapClient(config)
 
     @Serializable

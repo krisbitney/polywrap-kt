@@ -5,9 +5,9 @@ import io.github.krisbitney.core.types.ClientConfig
 import io.github.krisbitney.core.types.WrapEnv
 import io.github.krisbitney.uriResolvers.RecursiveResolver
 import io.github.krisbitney.uriResolvers.SequentialResolver
-import io.github.krisbitney.uriResolvers.cache.BasicWrapperCache
-import io.github.krisbitney.uriResolvers.cache.CacheResolver
-import io.github.krisbitney.uriResolvers.cache.WrapperCache
+import io.github.krisbitney.uriResolvers.cache.BasicResolutionResultCache
+import io.github.krisbitney.uriResolvers.cache.ResolutionResultCache
+import io.github.krisbitney.uriResolvers.cache.ResolutionResultCacheResolver
 import io.github.krisbitney.uriResolvers.embedded.PackageRedirect
 import io.github.krisbitney.uriResolvers.embedded.StaticResolver
 import io.github.krisbitney.uriResolvers.embedded.UriRedirect
@@ -15,27 +15,27 @@ import io.github.krisbitney.uriResolvers.embedded.WrapperRedirect
 import io.github.krisbitney.uriResolvers.extendable.ExtendableUriResolver
 
 /**
- * A concrete implementation of the [BaseClientConfigBuilder] class.
+ * A concrete implementation of the [BaseConfigBuilder] class.
  * This class builds [ClientConfig] instances using provided configurations.
  */
-class ClientConfigBuilder : BaseClientConfigBuilder() {
+class ConfigBuilder : BaseConfigBuilder() {
 
     /**
      * Adds the default configuration bundle to the current configuration.
      *
-     * @return This [ClientConfigBuilder] instance for chaining calls.
+     * @return This [ConfigBuilder] instance for chaining calls.
      */
-    override fun addDefaults(): IClientConfigBuilder {
+    override fun addDefaults(): IConfigBuilder {
         return add(DefaultBundle.getConfig())
     }
 
     /**
-     * Builds a [ClientConfig] instance using the current configuration and an optional [WrapperCache].
+     * Builds a [ClientConfig] instance using the current configuration and an optional [ResolutionResultCache].
      *
-     * @param cache An optional [WrapperCache] to be used by the [ClientConfig] instance.
+     * @param cache An optional [ResolutionResultCache] to be used by the [ClientConfig] instance.
      * @return A [ClientConfig] instance based on the current configuration.
      */
-    override fun build(cache: WrapperCache?): ClientConfig {
+    override fun build(cache: ResolutionResultCache?): ClientConfig {
         val static = StaticResolver.from(
             buildRedirects() + buildWrappers() + buildPackages()
         )
@@ -43,11 +43,11 @@ class ClientConfigBuilder : BaseClientConfigBuilder() {
             envs = buildEnvs(),
             interfaces = buildInterfaces(),
             resolver = RecursiveResolver(
-                CacheResolver(
+                ResolutionResultCacheResolver(
                     SequentialResolver(
                         listOf(static) + config.resolvers + listOf(ExtendableUriResolver())
                     ),
-                    cache ?: BasicWrapperCache()
+                    cache ?: BasicResolutionResultCache()
                 )
             )
         )

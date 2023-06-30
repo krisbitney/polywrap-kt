@@ -77,14 +77,12 @@ class ExtendableUriResolver(
      * @param uri The URI being resolved.
      * @param client The [Client] instance for the current request.
      * @param resolutionContext The [UriResolutionContext] for the current URI resolution process.
-     * @param resolveToPackage A flag indicating whether the URI should be resolved to a package or not.
      * @return A [Result] containing a [UriPackageOrWrapper] instance.
      */
     override fun tryResolveUri(
         uri: Uri,
         client: Client,
-        resolutionContext: UriResolutionContext,
-        resolveToPackage: Boolean
+        resolutionContext: UriResolutionContext
     ): Result<UriPackageOrWrapper> {
         val result = getUriResolvers(uri, client, resolutionContext)
         if (result.isFailure) {
@@ -96,6 +94,6 @@ class ExtendableUriResolver(
             return Result.success(UriPackageOrWrapper.UriValue(uri))
         }
 
-        return super.tryResolveUriWithResolvers(uri, client, resolvers, resolutionContext, resolveToPackage)
+        return super.tryResolveUriWithResolvers(uri, client, resolvers, resolutionContext)
     }
 }

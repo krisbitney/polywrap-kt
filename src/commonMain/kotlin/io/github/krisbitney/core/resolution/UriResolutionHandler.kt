@@ -13,7 +13,6 @@ interface UriResolutionHandler {
      */
     fun tryResolveUri(
         uri: Uri,
-        resolutionContext: UriResolutionContext? = null,
-        resolveToPackage: Boolean = false
+        resolutionContext: UriResolutionContext? = null
     ): Result<UriPackageOrWrapper>
 }

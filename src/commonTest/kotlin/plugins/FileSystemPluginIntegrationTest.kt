@@ -2,7 +2,7 @@ package plugins
 
 import emptyMockInvoker
 import io.github.krisbitney.client.PolywrapClient
-import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.ConfigBuilder
 import io.github.krisbitney.configBuilder.DefaultBundle
 import io.github.krisbitney.plugins.filesystem.FileSystemPlugin
 import io.github.krisbitney.plugins.filesystem.wrap.*
@@ -50,7 +50,7 @@ class FileSystemPluginIntegrationTest {
     fun invokeByClient() {
         prepareTestFile()
 
-        val config = ClientConfigBuilder().addDefaults().build()
+        val config = ConfigBuilder().addDefaults().build()
         val client = PolywrapClient(config)
 
         val result = client.invoke<ByteArray>(

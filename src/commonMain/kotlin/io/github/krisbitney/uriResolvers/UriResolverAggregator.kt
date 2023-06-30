@@ -27,21 +27,19 @@ abstract class UriResolverAggregator : UriResolver {
      * @param uri The URI being resolved.
      * @param client The [Client] instance for the current request.
      * @param resolutionContext The [UriResolutionContext] for the current URI resolution process.
-     * @param resolveToPackage A flag indicating whether the URI should be resolved to a package or not.
      * @return A [Result] containing a [UriPackageOrWrapper] instance.
      */
     override fun tryResolveUri(
         uri: Uri,
         client: Client,
-        resolutionContext: UriResolutionContext,
-        resolveToPackage: Boolean
+        resolutionContext: UriResolutionContext
     ): Result<UriPackageOrWrapper> {
         val resolverResult = getUriResolvers(uri, client, resolutionContext)
         if (resolverResult.isFailure) {
             return Result.failure(resolverResult.exceptionOrNull()!!)
         }
         val resolvers = resolverResult.getOrThrow()
-        return tryResolveUriWithResolvers(uri, client, resolvers, resolutionContext, resolveToPackage)
+        return tryResolveUriWithResolvers(uri, client, resolvers, resolutionContext)
     }
 
     /**
@@ -61,20 +59,18 @@ abstract class UriResolverAggregator : UriResolver {
      * @param client The [Client] instance for the current request.
      * @param resolvers A list of [UriResolver] instances to use for resolving the URI.
      * @param resolutionContext The [UriResolutionContext] for the current URI resolution process.
-     * @param resolveToPackage A flag indicating whether the URI should be resolved to a package or not.
      * @return A [Result] containing a [UriPackageOrWrapper] instance.
      */
     protected fun tryResolveUriWithResolvers(
         uri: Uri,
         client: Client,
         resolvers: List<UriResolver>,
-        resolutionContext: UriResolutionContext,
-        resolveToPackage: Boolean
+        resolutionContext: UriResolutionContext
     ): Result<UriPackageOrWrapper> {
         val subContext = resolutionContext.createSubHistoryContext()
 
         for (resolver in resolvers) {
-            val result = resolver.tryResolveUri(uri, client, subContext, resolveToPackage)
+            val result = resolver.tryResolveUri(uri, client, subContext)
             val resultVal = result.getOrNull()
             val isUri = resultVal is UriPackageOrWrapper.UriValue && resultVal.uri == uri
             if (!isUri) {

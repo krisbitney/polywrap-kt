@@ -1,7 +1,7 @@
 package client
 
 import io.github.krisbitney.client.PolywrapClient
-import io.github.krisbitney.configBuilder.ClientConfigBuilder
+import io.github.krisbitney.configBuilder.ConfigBuilder
 import io.github.krisbitney.core.resolution.Uri
 import io.github.krisbitney.core.resolution.UriPackageOrWrapper
 import io.github.krisbitney.core.wrap.WrapManifest
@@ -13,12 +13,12 @@ import kotlin.test.assertTrue
 class GetFileManifestTest {
 
     private val sha3Uri = Uri("ipfs/QmThRxFfr7Hj9Mq6WmcGXjkRrgqMG3oD93SLX27tinQWy5")
-    private val config = ClientConfigBuilder().addDefaults().build()
+    private val config = ConfigBuilder().addDefaults().build()
     private val client = PolywrapClient(config)
 
     @Test
     fun tryResolveUriToPackage() {
-        val result = client.tryResolveUri(uri = sha3Uri, resolveToPackage = true)
+        val result = client.tryResolveUri(uri = sha3Uri)
         assertNull(result.exceptionOrNull())
         assertTrue(result.getOrThrow() is UriPackageOrWrapper.PackageValue)
     }

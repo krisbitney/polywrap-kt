@@ -32,14 +32,12 @@ class UriResolverWrapper(private val implementationUri: Uri) : ResolverWithHisto
      * @param uri The URI being resolved.
      * @param client The [Client] instance for the current request.
      * @param resolutionContext The [UriResolutionContext] for the current URI resolution process.
-     * @param resolveToPackage A flag indicating whether the URI should be resolved to a package or not.
      * @return A [Result] containing a [UriPackageOrWrapper] instance.
      */
     override fun _tryResolveUri(
         uri: Uri,
         client: Client,
-        resolutionContext: UriResolutionContext,
-        resolveToPackage: Boolean
+        resolutionContext: UriResolutionContext
     ): Result<UriPackageOrWrapper> {
         val result = tryResolveUriWithImplementation(uri, implementationUri, client, resolutionContext)
 
