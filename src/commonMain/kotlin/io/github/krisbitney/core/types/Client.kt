@@ -1,6 +1,7 @@
 package io.github.krisbitney.core.types
 
 import io.github.krisbitney.core.resolution.Uri
+import io.github.krisbitney.core.resolution.UriResolutionContext
 import io.github.krisbitney.core.resolution.UriResolutionHandler
 import io.github.krisbitney.core.resolution.UriResolver
 import io.github.krisbitney.core.wrap.WrapManifest
@@ -26,8 +27,9 @@ data class ClientConfig(
 interface Client : Invoker, UriResolutionHandler {
 
     /**
-     * Returns all interfaces from the configuration used to instantiate the client.
-     * @return an array of interfaces and their registered implementations
+     * Returns the interface implementations stored in the configuration.
+     *
+     * @return A map of interface URIs to a list of their respective implementation URIs.
      */
     fun getInterfaces(): Map<Uri, List<Uri>>?
 
@@ -41,7 +43,7 @@ interface Client : Invoker, UriResolutionHandler {
      * Returns an env (a set of environmental variables) from the configuration
      * used to instantiate the client.
      * @param uri the URI used to register the env
-     * @return an env, or undefined if an env is not found at the given URI
+     * @return an env, or null if an env is not found at the given URI
      */
     fun getEnvByUri(uri: Uri): WrapEnv?
 
@@ -82,4 +84,30 @@ interface Client : Invoker, UriResolutionHandler {
         abi: Boolean = false,
         recursive: Boolean = false
     ): Result<Boolean>
+
+    /**
+     * Load a wrapper, given a URI.
+     *
+     * @param uri the Uri to resolve
+     * @param resolutionContext - Use and update an existing resolution context
+     *
+     * @return a Result containing a Wrapper if the request was successful
+     */
+    fun loadWrapper(
+        uri: Uri,
+        resolutionContext: UriResolutionContext? = null
+    ): Result<Wrapper>
+
+    /**
+     * Load a wrap package, given a URI.
+     *
+     * @param uri the Uri to resolve
+     * @param resolutionContext - Use and update an existing resolution context
+     *
+     * @return a Result containing a WrapPackage if the request was successful
+     */
+    fun loadPackage(
+        uri: Uri,
+        resolutionContext: UriResolutionContext? = null
+    ): Result<WrapPackage>
 }

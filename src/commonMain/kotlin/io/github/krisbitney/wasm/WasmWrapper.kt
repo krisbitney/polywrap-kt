@@ -49,7 +49,6 @@ data class WasmWrapper(val wasmModule: ByteArray) : Wrapper {
                 code = WrapErrorCode.WRAPPER_INVOKE_ABORTED,
                 uri = options.uri.uri,
                 method = options.method,
-                args = options.args.contentToString(),
                 source = source,
                 innerError = prev
             )
@@ -60,8 +59,7 @@ data class WasmWrapper(val wasmModule: ByteArray) : Wrapper {
                 reason = message,
                 code = WrapErrorCode.WRAPPER_INTERNAL_ERROR,
                 uri = options.uri.uri,
-                method = options.method,
-                args = options.args.contentToString()
+                method = options.method
             )
         }
 

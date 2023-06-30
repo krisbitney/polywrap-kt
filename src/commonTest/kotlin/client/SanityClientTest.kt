@@ -29,7 +29,7 @@ class SanityClientTest {
     fun invoke() {
         val config = ConfigBuilder().addDefaults().build()
         val client = PolywrapClient(config)
-        val result = client.invoke(
+        val result = client.invokeRaw(
             InvokeOptions(
                 uri = sha3Uri,
                 method = "keccak_256",

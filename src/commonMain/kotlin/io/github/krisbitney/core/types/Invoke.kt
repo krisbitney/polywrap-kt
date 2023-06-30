@@ -78,11 +78,10 @@ interface Invoker {
      * @param options Invoker options to set.
      * @return A [Result] containing a MsgPack encoded byte array or an error.
      */
-    fun invoke(options: InvokeOptions): Result<ByteArray>
+    fun invokeRaw(options: InvokeOptions): Result<ByteArray>
 
     /**
-     * Returns the interface implementations associated with an interface URI from the
-     * configuration used to instantiate the client.
+     * Retrieves the list of implementation URIs for the specified interface URI.
      *
      * @param uri - a wrap URI
      * @param applyResolution - If true, follow redirects to resolve URIs

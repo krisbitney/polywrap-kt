@@ -41,9 +41,8 @@ data class PluginWrapper<TConfig>(val module: PluginModule<TConfig>) : Wrapper {
             val error = WrapError(
                 reason = reason,
                 code = WrapErrorCode.WRAPPER_INVOKE_ABORTED,
-                uri = options.uri.toString(),
+                uri = uri.toString(),
                 method = method,
-                args = args.contentToString()
             )
             Result.failure(error)
         }

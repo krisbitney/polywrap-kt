@@ -49,7 +49,7 @@ abstract class CommonWrapImports<TMemory>(private val state: WasmModuleState, pr
         val method = readBytes(memory, methodPtr, methodLen).decodeToString()
         val args = readBytes(memory, argsPtr, argsLen)
 
-        val result = state.invoker.invoke(InvokeOptions(Uri(uri), method, args))
+        val result = state.invoker.invokeRaw(InvokeOptions(Uri(uri), method, args))
 
         if (result.isSuccess) {
             state.subinvoke.result = result.getOrThrow()

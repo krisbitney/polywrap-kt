@@ -20,39 +20,18 @@ import io.github.krisbitney.core.resolution.algorithms.getImplementations as get
  */
 class PolywrapClient(val config: ClientConfig) : Client {
 
-    /**
-     * Returns the interface implementations stored in the configuration.
-     *
-     * @return A map of interface URIs to a list of their respective implementation URIs.
-     */
     override fun getInterfaces(): Map<Uri, List<Uri>>? {
         return config.interfaces
     }
 
-    /**
-     * Returns the environments stored in the configuration.
-     *
-     * @return A map of environment URIs to their respective [WrapEnv] instances.
-     */
     override fun getEnvs(): Map<Uri, WrapEnv>? {
         return config.envs
     }
 
-    /**
-     * Returns the [UriResolver] stored in the configuration.
-     *
-     * @return The configured [UriResolver].
-     */
     override fun getResolver(): UriResolver {
         return config.resolver
     }
 
-    /**
-     * Retrieves the [WrapEnv] associated with the specified URI.
-     *
-     * @param uri The URI of the wrapper environment to retrieve.
-     * @return The [WrapEnv] associated with the given URI, or null if not found.
-     */
     override fun getEnvByUri(uri: Uri): WrapEnv? {
         config.envs?.forEach { env ->
             if (env.key == uri) {
@@ -62,12 +41,6 @@ class PolywrapClient(val config: ClientConfig) : Client {
         return null
     }
 
-    /**
-     * Retrieves the manifest of the package at the specified URI.
-     *
-     * @param uri The URI of the package to retrieve the manifest for.
-     * @return A [Result] containing the [WrapManifest], or an error if the retrieval fails.
-     */
     override fun getManifest(uri: Uri): Result<WrapManifest> {
         val load = loadPackage(uri)
         if (load.isFailure) {
@@ -84,16 +57,9 @@ class PolywrapClient(val config: ClientConfig) : Client {
             )
             return Result.failure(error)
         }
-        return Result.success(manifest.getOrThrow())
+        return manifest
     }
 
-    /**
-     * Retrieves the file at the specified path within the package at the specified URI.
-     *
-     * @param uri The URI of the package containing the file.
-     * @param path The path of the file within the package.
-     * @return A [Result] containing the file content as a [ByteArray], or an error if the retrieval fails.
-     */
     override fun getFile(
         uri: Uri,
         path: String
@@ -119,14 +85,6 @@ class PolywrapClient(val config: ClientConfig) : Client {
         return result
     }
 
-    /**
-     * Retrieves the list of implementation URIs for the specified interface URI.
-     *
-     * @param uri The URI of the interface for which implementations are being requested.
-     * @param applyResolution If true, the client will attempt to resolve URIs using its [UriResolver].
-     * @param resolutionContext The [UriResolutionContext] to be used during URI resolution, or null for a default context.
-     * @return A [Result] containing the list of implementation URIs.
-     */
     override fun getImplementations(
         uri: Uri,
         applyResolution: Boolean,
@@ -138,29 +96,20 @@ class PolywrapClient(val config: ClientConfig) : Client {
         resolutionContext
     )
 
-    /**
-     * Invokes the specified [Wrapper] with the provided [InvokeOptions].
-     *
-     * @param wrapper The [Wrapper] to be invoked.
-     * @param options The [InvokeOptions] specifying the URI, method, arguments, and other settings for the invocation.
-     * @return A [Result] containing the invocation result as a [ByteArray], or an error if the invocation fails.
-     */
     override fun invokeWrapper(
         wrapper: Wrapper,
         options: InvokeOptions
     ): Result<ByteArray> = wrapper.invoke(options, this)
 
-    /**
-     * Invokes the wrapper at the specified URI with the provided [InvokeOptions].
-     *
-     * @param options The [InvokeOptions] specifying the URI, method, arguments, and other settings for the invocation.
-     * @return A [Result] containing the invocation result as a [ByteArray], or an error if the invocation fails.
-     */
-    override fun invoke(options: InvokeOptions): Result<ByteArray> {
+    override fun invokeRaw(options: InvokeOptions): Result<ByteArray> {
         val resolutionContext = options.resolutionContext ?: BasicUriResolutionContext()
-        val wrapper = loadWrapper(options.uri, resolutionContext).getOrElse {
-            return@invoke Result.failure(it)
+        val loadResult = loadWrapper(options.uri, resolutionContext)
+
+        if (loadResult.isFailure) {
+            return Result.failure(loadResult.exceptionOrNull()!!)
         }
+
+        val wrapper = loadResult.getOrThrow()
 
         val resolutionPath = resolutionContext.getResolutionPath()
 
@@ -199,7 +148,7 @@ class PolywrapClient(val config: ClientConfig) : Client {
             env = env?.let { msgPackEncode(EnvSerializer, it) },
             resolutionContext = resolutionContext
         )
-        return invoke(options).mapCatching {
+        return invokeRaw(options).mapCatching {
             if (R::class == Map::class) {
                 msgPackDecode(NullableKVSerializer, it).getOrThrow() as R
             } else {
@@ -232,7 +181,7 @@ class PolywrapClient(val config: ClientConfig) : Client {
             env = env?.let { msgPackEncode(EnvSerializer, it) },
             resolutionContext = resolutionContext
         )
-        return invoke(options).mapCatching {
+        return invokeRaw(options).mapCatching {
             if (R::class == Map::class) {
                 msgPackDecode(NullableKVSerializer, it).getOrThrow() as R
             } else {
@@ -241,13 +190,6 @@ class PolywrapClient(val config: ClientConfig) : Client {
         }
     }
 
-    /**
-     * Attempts to resolve the specified URI using the client's [UriResolver].
-     *
-     * @param uri The URI to be resolved.
-     * @param resolutionContext The [UriResolutionContext] to be used during URI resolution, or null for a default context.
-     * @return A [Result] containing the resolved [UriPackageOrWrapper], or an error if the resolution fails.
-     */
     override fun tryResolveUri(
         uri: Uri,
         resolutionContext: UriResolutionContext?
@@ -257,14 +199,6 @@ class PolywrapClient(val config: ClientConfig) : Client {
         return uriResolver.tryResolveUri(uri, this, context)
     }
 
-    /**
-     * Validates the package at the specified URI.
-     *
-     * @param uri The URI of the package to validate.
-     * @param abi If true, ABI validation will be performed.
-     * @param recursive If true, validation will be performed recursively on all dependencies.
-     * @return A [Result] containing a boolean indicating the validation result, or an error if validation fails.
-     */
     override fun validate(
         uri: Uri,
         abi: Boolean,
@@ -273,9 +207,9 @@ class PolywrapClient(val config: ClientConfig) : Client {
         throw NotImplementedError("validate() is not yet implemented.")
     }
 
-    private fun loadWrapper(
+    override fun loadWrapper(
         uri: Uri,
-        resolutionContext: UriResolutionContext? = null
+        resolutionContext: UriResolutionContext?
     ): Result<Wrapper> {
         val context = resolutionContext ?: BasicUriResolutionContext()
 
@@ -325,9 +259,9 @@ class PolywrapClient(val config: ClientConfig) : Client {
         }
     }
 
-    private fun loadPackage(
+    override fun loadPackage(
         uri: Uri,
-        resolutionContext: UriResolutionContext? = null
+        resolutionContext: UriResolutionContext?
     ): Result<WrapPackage> {
         val context = resolutionContext ?: BasicUriResolutionContext()
 

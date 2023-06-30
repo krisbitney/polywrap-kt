@@ -20,7 +20,7 @@ object UriResolverExtensionInvoker {
         wrapper: Uri,
         uri: Uri
     ): Result<MaybeUriOrManifest> {
-        val result = invoker.invoke(
+        val result = invoker.invokeRaw(
             InvokeOptions(
                 uri = wrapper,
                 method = "tryResolveUri",
@@ -46,7 +46,7 @@ object UriResolverExtensionInvoker {
         wrapper: Uri,
         path: String
     ): Result<ByteArray?> {
-        val result = invoker.invoke(
+        val result = invoker.invokeRaw(
             InvokeOptions(
                 uri = wrapper,
                 method = "getFile",

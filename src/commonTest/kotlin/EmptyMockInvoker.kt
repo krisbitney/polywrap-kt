@@ -9,7 +9,7 @@ val emptyMockInvoker = object : Invoker {
         throw NotImplementedError()
     }
 
-    override fun invoke(options: InvokeOptions): Result<ByteArray> {
+    override fun invokeRaw(options: InvokeOptions): Result<ByteArray> {
         throw NotImplementedError()
     }
 

@@ -60,7 +60,6 @@ enum class WrapErrorCode(val value: Int) {
  * @property code The error code.
  * @property uri The URI of the wrapper.
  * @property method The method that caused the error.
- * @property args The arguments passed to the method.
  * @property source The error source (file, row, col).
  * @property resolutionStack The clean resolution step stack.
  * @property innerError A nested WrapError.
@@ -71,11 +70,10 @@ class WrapError(
     val code: WrapErrorCode,
     val uri: String,
     val method: String? = null,
-    val args: String? = null,
     val source: ErrorSource? = null,
     val resolutionStack: String? = null,
     val innerError: WrapError? = null
-) : Exception(stringify(reason, cause, code, uri, method, args, source, resolutionStack, innerError), cause) {
+) : Exception(stringify(reason, cause, code, uri, method, source, resolutionStack, innerError), cause) {
 
     override fun toString(): String {
         return "$name: $message"
@@ -95,7 +93,6 @@ class WrapError(
                 Regex("(?:\r\n|\r|\n)code: (?<code>1?[0-9]{1,2}|2[0-4][0-9]|25[0-5]) (?:[A-Z]+ ?){1,5}").pattern,
                 Regex("(?:\r\n|\r|\n)uri: (?<uri>wrap://[A-Za-z0-9_-]+/.+)").pattern,
                 Regex("(?:(?:\r\n|\r|\n)method: (?<method>([A-Za-z_]{1}[A-Za-z0-9_]*)))?").pattern,
-                Regex("(?:(?:\r\n|\r|\n)args: (?<args>\\{(?:.|\r|\n)+} ))?").pattern,
                 Regex("(?:(?:\r\n|\r|\n)source: \\{ file: \"(?<file>.+)\", row: (?<row>[0-9]+), col: (?<col>[0-9]+) })?").pattern,
                 Regex("(?:(?:\r\n|\r|\n)uriResolutionStack: (?<resolutionStack>\\[(?:.|\r|\n)+]))?").pattern,
                 Regex("(?:(?:\r\n|\r|\n){2}This exception was caused by the following exception:(?:\r\n|\r|\n)(?<cause>(?:.|\r|\n)+))?").pattern,
@@ -109,7 +106,6 @@ class WrapError(
             val code: WrapErrorCode,
             val uri: String,
             val method: String? = null,
-            val args: String? = null,
             val source: ErrorSource? = null,
             val resolutionStack: String? = null,
             val innerError: WrapError? = null
@@ -129,7 +125,6 @@ class WrapError(
                         it.code,
                         it.uri,
                         it.method,
-                        it.args,
                         it.source,
                         it.resolutionStack,
                         it.innerError
@@ -150,7 +145,6 @@ class WrapError(
                     currArgs.code,
                     currArgs.uri,
                     currArgs.method,
-                    currArgs.args,
                     currArgs.source,
                     currArgs.resolutionStack,
                     curr
@@ -177,7 +171,6 @@ class WrapError(
             val reason = groups["reason"]?.value ?: return null
             val uri = groups["uri"]?.value ?: return null
             val method = groups["method"]?.value
-            val args = groups["args"]?.value
             val file = groups["file"]?.value
             val row = groups["row"]?.value
             val col = groups["col"]?.value
@@ -198,7 +191,6 @@ class WrapError(
                 code = WrapErrorCode.from(code),
                 uri = uri,
                 method = method,
-                args = args?.trim(),
                 source = source,
                 resolutionStack = resolutionStack
             )
@@ -210,13 +202,11 @@ class WrapError(
             code: WrapErrorCode,
             uri: String,
             method: String? = null,
-            args: String? = null,
             source: ErrorSource? = null,
             resolutionStack: String? = null,
             innerError: WrapError? = null
         ): String {
             val maybeMethod = method?.let { "method: $it" } ?: ""
-            val maybeArgs = args?.let { "args: $it " } ?: ""
             val maybeSource = source?.let { "source: { file: \"${it.file}\", row: ${it.row}, col: ${it.col} }" } ?: ""
             val maybeResolutionStack = resolutionStack?.let { "uriResolutionStack: $it" } ?: ""
 
@@ -230,7 +220,6 @@ class WrapError(
                 "code: $code",
                 "uri: $uri",
                 maybeMethod,
-                maybeArgs,
                 maybeSource,
                 maybeResolutionStack,
                 maybeCause,

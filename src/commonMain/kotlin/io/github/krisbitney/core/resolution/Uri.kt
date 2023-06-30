@@ -52,7 +52,7 @@ class Uri(private val _config: UriConfig) {
      *
      * @param uri a string representation of a wrap URI
      */
-    constructor(uri: String) : this(parseUri(uri).getOrElse { throw it })
+    constructor(uri: String) : this(parseUri(uri).getOrThrow())
 
     override fun equals(other: Any?): Boolean = when (other) {
         is Uri -> this.uri == other.uri
